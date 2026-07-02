@@ -1,4 +1,5 @@
 import type { Booking } from '../types/travel'
+import './BookingCard.css'
 
 type BookingCardProps = {
   booking: Booking

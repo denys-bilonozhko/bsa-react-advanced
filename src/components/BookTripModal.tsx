@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import type { Booking, Trip } from '../types/travel'
+import './BookTripModal.css'
 
 type BookTripModalProps = {
   trip: Trip

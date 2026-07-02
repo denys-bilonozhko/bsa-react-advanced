@@ -1,5 +1,6 @@
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import './AuthPage.css'
 
 type AuthPageProps = {
   mode: 'sign-in' | 'sign-up'

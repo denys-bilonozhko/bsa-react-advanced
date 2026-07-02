@@ -1,4 +1,5 @@
 import heartIcon from '../assets/images/heart.svg'
+import './Footer.css'
 
 export function Footer() {
   return (

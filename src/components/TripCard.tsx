@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Trip } from '../types/travel'
+import './TripCard.css'
 
 type TripCardProps = {
   trip: Trip

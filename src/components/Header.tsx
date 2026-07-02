@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import briefcaseIcon from '../assets/images/briefcase.svg'
 import userIcon from '../assets/images/user.svg'
+import './Header.css'
 
 const authPaths = new Set(['/sign-in', '/sign-up'])
 

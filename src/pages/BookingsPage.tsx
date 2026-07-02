@@ -1,5 +1,6 @@
 import { BookingCard } from '../components/BookingCard'
 import type { Booking } from '../types/travel'
+import './BookingsPage.css'
 
 type BookingsPageProps = {
   bookings: Booking[]

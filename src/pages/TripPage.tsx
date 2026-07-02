@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import { BookTripModal } from '../components/BookTripModal'
 import type { Booking, Trip } from '../types/travel'
+import './TripPage.css'
 
 type TripPageProps = {
   trips: Trip[]

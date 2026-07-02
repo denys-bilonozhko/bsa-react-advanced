@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { TripCard } from '../components/TripCard'
 import type { Trip, TripLevel } from '../types/travel'
+import './TripsPage.css'
 
 type TripsPageProps = {
   trips: Trip[]
