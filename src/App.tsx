@@ -4,6 +4,7 @@ import bookingsData from './assets/data/bookings.json'
 import { Layout } from './components/Layout'
 import { AuthPage } from './pages/AuthPage'
 import { PagePlaceholder } from './pages/PagePlaceholder'
+import { TripsPage } from './pages/TripsPage'
 import type { Booking } from './types/travel'
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<PagePlaceholder title="Trips" />} />
+        <Route path="/" element={<TripsPage />} />
         <Route path="/sign-up" element={<AuthPage mode="sign-up" />} />
         <Route path="/sign-in" element={<AuthPage mode="sign-in" />} />
         <Route
