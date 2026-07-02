@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
-import tripsData from '../assets/data/trips.json'
 import { BookTripModal } from '../components/BookTripModal'
 import type { Booking, Trip } from '../types/travel'
 
 type TripPageProps = {
+  trips: Trip[]
   onBook: (booking: Booking) => void
 }
 
-const trips = tripsData as Trip[]
-
-export function TripPage({ onBook }: TripPageProps) {
+export function TripPage({ trips, onBook }: TripPageProps) {
   const { tripId } = useParams()
   const [isBookingOpen, setIsBookingOpen] = useState(false)
   const trip = trips.find(({ id }) => id === tripId)

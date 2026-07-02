@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import bookingsData from './assets/data/bookings.json'
+import tripsData from './assets/data/trips.json'
 import { Layout } from './components/Layout'
 import { AuthPage } from './pages/AuthPage'
 import { BookingsPage } from './pages/BookingsPage'
 import { TripPage } from './pages/TripPage'
 import { TripsPage } from './pages/TripsPage'
-import type { Booking } from './types/travel'
+import type { Booking, Trip } from './types/travel'
 
 function App() {
+  const [trips] = useState<Trip[]>(tripsData as Trip[])
   const [bookings, setBookings] = useState<Booking[]>(bookingsData)
 
   const addBooking = (booking: Booking) => {
@@ -24,12 +26,12 @@ function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<TripsPage />} />
+        <Route path="/" element={<TripsPage trips={trips} />} />
         <Route path="/sign-up" element={<AuthPage mode="sign-up" />} />
         <Route path="/sign-in" element={<AuthPage mode="sign-in" />} />
         <Route
           path="/trip/:tripId"
-          element={<TripPage onBook={addBooking} />}
+          element={<TripPage trips={trips} onBook={addBooking} />}
         />
         <Route
           path="/bookings"

@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import tripsData from '../assets/data/trips.json'
 import { TripCard } from '../components/TripCard'
 import type { Trip, TripLevel } from '../types/travel'
 
+type TripsPageProps = {
+  trips: Trip[]
+}
+
 type DurationFilter = '' | '0_x_5' | '5_x_10' | '10'
 type LevelFilter = '' | TripLevel
-
-const trips = tripsData as Trip[]
 
 const durationMatches = (duration: number, filter: DurationFilter) => {
   if (filter === '0_x_5') return duration >= 1 && duration <= 5
@@ -15,7 +16,7 @@ const durationMatches = (duration: number, filter: DurationFilter) => {
   return true
 }
 
-export function TripsPage() {
+export function TripsPage({ trips }: TripsPageProps) {
   const [search, setSearch] = useState('')
   const [duration, setDuration] = useState<DurationFilter>('')
   const [level, setLevel] = useState<LevelFilter>('')
