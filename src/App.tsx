@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import bookingsData from './assets/data/bookings.json'
 import { Layout } from './components/Layout'
+import { AuthPage } from './pages/AuthPage'
 import { PagePlaceholder } from './pages/PagePlaceholder'
 import type { Booking } from './types/travel'
 
@@ -12,8 +13,8 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<PagePlaceholder title="Trips" />} />
-        <Route path="/sign-up" element={<PagePlaceholder title="Sign Up" />} />
-        <Route path="/sign-in" element={<PagePlaceholder title="Sign In" />} />
+        <Route path="/sign-up" element={<AuthPage mode="sign-up" />} />
+        <Route path="/sign-in" element={<AuthPage mode="sign-in" />} />
         <Route
           path="/trip/:tripId"
           element={<PagePlaceholder title="Trip details" />}
