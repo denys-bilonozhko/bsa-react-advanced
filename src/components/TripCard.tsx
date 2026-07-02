@@ -11,6 +11,7 @@ export function TripCard({ trip }: TripCardProps) {
     <li data-test-id="trip-card" className="trip-card">
       <img
         data-test-id="trip-card-image"
+        className="trip-card__image"
         src={trip.image}
         alt={trip.title}
       />
