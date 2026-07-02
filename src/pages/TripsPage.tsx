@@ -9,9 +9,9 @@ type LevelFilter = '' | TripLevel
 const trips = tripsData as Trip[]
 
 const durationMatches = (duration: number, filter: DurationFilter) => {
-  if (filter === '0_x_5') return duration < 5
-  if (filter === '5_x_10') return duration >= 5 && duration < 10
-  if (filter === '10') return duration >= 10
+  if (filter === '0_x_5') return duration >= 1 && duration <= 5
+  if (filter === '5_x_10') return duration >= 6 && duration <= 10
+  if (filter === '10') return duration >= 11
   return true
 }
 
@@ -55,9 +55,9 @@ export function TripsPage() {
               }
             >
               <option value="">duration</option>
-              <option value="0_x_5">&lt; 5 days</option>
-              <option value="5_x_10">&lt; 10 days</option>
-              <option value="10">&ge; 10 days</option>
+              <option value="0_x_5">1–5 days</option>
+              <option value="5_x_10">6–10 days</option>
+              <option value="10">11+ days</option>
             </select>
           </label>
           <label className="select">
