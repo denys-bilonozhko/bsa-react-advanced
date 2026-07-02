@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import bookingsData from './assets/data/bookings.json'
 import { Layout } from './components/Layout'
 import { AuthPage } from './pages/AuthPage'
-import { PagePlaceholder } from './pages/PagePlaceholder'
+import { BookingsPage } from './pages/BookingsPage'
 import { TripPage } from './pages/TripPage'
 import { TripsPage } from './pages/TripsPage'
 import type { Booking } from './types/travel'
@@ -13,6 +13,12 @@ function App() {
 
   const addBooking = (booking: Booking) => {
     setBookings((currentBookings) => [...currentBookings, booking])
+  }
+
+  const cancelBooking = (bookingId: string) => {
+    setBookings((currentBookings) =>
+      currentBookings.filter(({ id }) => id !== bookingId),
+    )
   }
 
   return (
@@ -27,7 +33,9 @@ function App() {
         />
         <Route
           path="/bookings"
-          element={<PagePlaceholder title={`Bookings (${bookings.length})`} />}
+          element={
+            <BookingsPage bookings={bookings} onCancel={cancelBooking} />
+          }
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
