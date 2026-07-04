@@ -1,13 +1,25 @@
+import { useEffect } from 'react'
 import { BookingCard } from '../components/BookingCard'
-import type { Booking } from '../types/travel'
+import { Loader } from '../components/Loader'
+import {
+  cancelBooking,
+  loadBookings,
+} from '../store/bookingsSlice'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 import './BookingsPage.css'
 
-type BookingsPageProps = {
-  bookings: Booking[]
-  onCancel: (bookingId: string) => void
-}
+export function BookingsPage() {
+  const dispatch = useAppDispatch()
+  const { items: bookings, loadStatus, isMutating } = useAppSelector(
+    (state) => state.bookings,
+  )
 
-export function BookingsPage({ bookings, onCancel }: BookingsPageProps) {
+  useEffect(() => {
+    if (loadStatus === 'idle') {
+      void dispatch(loadBookings())
+    }
+  }, [dispatch, loadStatus])
+
   const sortedBookings = [...bookings].sort(
     (first, second) =>
       new Date(first.date).getTime() - new Date(second.date).getTime(),
@@ -16,15 +28,19 @@ export function BookingsPage({ bookings, onCancel }: BookingsPageProps) {
   return (
     <main className="bookings-page">
       <h1 className="visually-hidden">Travel App</h1>
-      <ul className="bookings__list">
-        {sortedBookings.map((booking) => (
-          <BookingCard
-            key={booking.id}
-            booking={booking}
-            onCancel={onCancel}
-          />
-        ))}
-      </ul>
+      {loadStatus === 'loading' || isMutating ? (
+        <Loader />
+      ) : (
+        <ul className="bookings__list">
+          {sortedBookings.map((booking) => (
+            <BookingCard
+              key={booking.id}
+              booking={booking}
+              onCancel={(bookingId) => void dispatch(cancelBooking(bookingId))}
+            />
+          ))}
+        </ul>
+      )}
     </main>
   )
 }
