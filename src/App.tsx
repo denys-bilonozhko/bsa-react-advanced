@@ -1,45 +1,60 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import bookingsData from './assets/data/bookings.json'
-import tripsData from './assets/data/trips.json'
 import { Layout } from './components/Layout'
+import { Loader } from './components/Loader'
 import { AuthPage } from './pages/AuthPage'
 import { BookingsPage } from './pages/BookingsPage'
 import { TripPage } from './pages/TripPage'
 import { TripsPage } from './pages/TripsPage'
-import type { Booking, Trip } from './types/travel'
+import {
+  hasStoredToken,
+  loadCurrentUser,
+  sessionChecked,
+} from './store/authSlice'
+import { useAppDispatch, useAppSelector } from './store/hooks'
 
 function App() {
-  const [trips] = useState<Trip[]>(tripsData as Trip[])
-  const [bookings, setBookings] = useState<Booking[]>(bookingsData)
+  const dispatch = useAppDispatch()
+  const { user, isSessionChecked } = useAppSelector((state) => state.auth)
 
-  const addBooking = (booking: Booking) => {
-    setBookings((currentBookings) => [...currentBookings, booking])
-  }
+  useEffect(() => {
+    if (hasStoredToken()) {
+      void dispatch(loadCurrentUser())
+    } else {
+      dispatch(sessionChecked())
+    }
+  }, [dispatch])
 
-  const cancelBooking = (bookingId: string) => {
-    setBookings((currentBookings) =>
-      currentBookings.filter(({ id }) => id !== bookingId),
+  if (!isSessionChecked) {
+    return (
+      <div className="loader-page">
+        <Loader />
+      </div>
     )
   }
 
   return (
     <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<TripsPage trips={trips} />} />
-        <Route path="/sign-up" element={<AuthPage mode="sign-up" />} />
-        <Route path="/sign-in" element={<AuthPage mode="sign-in" />} />
+      <Route element={<Layout user={user} />}>
         <Route
-          path="/trip/:tripId"
-          element={<TripPage trips={trips} onBook={addBooking} />}
+          path="/sign-up"
+          element={user ? <Navigate to="/" replace /> : <AuthPage mode="sign-up" />}
         />
         <Route
-          path="/bookings"
-          element={
-            <BookingsPage bookings={bookings} onCancel={cancelBooking} />
-          }
+          path="/sign-in"
+          element={user ? <Navigate to="/" replace /> : <AuthPage mode="sign-in" />}
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {user && (
+          <>
+            <Route path="/" element={<TripsPage />} />
+            <Route path="/trip/:tripId" element={<TripPage />} />
+            <Route path="/bookings" element={<BookingsPage />} />
+          </>
+        )}
+        <Route
+          path="*"
+          element={<Navigate to={user ? '/' : '/sign-in'} replace />}
+        />
       </Route>
     </Routes>
   )

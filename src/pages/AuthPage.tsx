@@ -1,5 +1,8 @@
-import type { FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
+import { Loader } from '../components/Loader'
+import { signIn, signUp } from '../store/authSlice'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 import './AuthPage.css'
 
 type AuthPageProps = {
@@ -7,7 +10,11 @@ type AuthPageProps = {
 }
 
 export function AuthPage({ mode }: AuthPageProps) {
-  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const isLoading = useAppSelector((state) => state.auth.isLoading)
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const isSignUp = mode === 'sign-up'
   const actionLabel = isSignUp ? 'Sign Up' : 'Sign In'
   const alternativeLabel = isSignUp ? 'Sign In' : 'Sign Up'
@@ -15,7 +22,11 @@ export function AuthPage({ mode }: AuthPageProps) {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    navigate('/')
+    if (isSignUp) {
+      void dispatch(signUp({ fullName, email, password }))
+    } else {
+      void dispatch(signIn({ email, password }))
+    }
   }
 
   return (
@@ -26,6 +37,7 @@ export function AuthPage({ mode }: AuthPageProps) {
         autoComplete="off"
         onSubmit={handleSubmit}
       >
+        {isLoading && <Loader />}
         <h2 className={`${mode}-form__title`}>{actionLabel}</h2>
         {isSignUp && (
           <label className="input">
@@ -35,6 +47,8 @@ export function AuthPage({ mode }: AuthPageProps) {
               name="full-name"
               type="text"
               required
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
             />
           </label>
         )}
@@ -45,6 +59,8 @@ export function AuthPage({ mode }: AuthPageProps) {
             name="email"
             type="email"
             required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
           />
         </label>
         <label className="input">
@@ -57,9 +73,22 @@ export function AuthPage({ mode }: AuthPageProps) {
             minLength={3}
             maxLength={20}
             required
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
           />
         </label>
-        <button data-test-id="auth-submit" className="button" type="submit">
+        <button
+          data-test-id="auth-submit"
+          className="button"
+          type="submit"
+          disabled={
+            isLoading ||
+            !email ||
+            password.length < 3 ||
+            password.length > 20 ||
+            (isSignUp && !fullName)
+          }
+        >
           {actionLabel}
         </button>
       </form>

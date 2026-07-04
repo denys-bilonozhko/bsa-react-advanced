@@ -1,13 +1,16 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import briefcaseIcon from '../assets/images/briefcase.svg'
 import userIcon from '../assets/images/user.svg'
+import { signedOut, type User } from '../store/authSlice'
+import { useAppDispatch } from '../store/hooks'
 import './Header.css'
 
-const authPaths = new Set(['/sign-in', '/sign-up'])
+type HeaderProps = {
+  user: User | null
+}
 
-export function Header() {
-  const { pathname } = useLocation()
-  const showNavigation = !authPaths.has(pathname)
+export function Header({ user }: HeaderProps) {
+  const dispatch = useAppDispatch()
 
   return (
     <header className="header">
@@ -15,7 +18,7 @@ export function Header() {
         <Link data-test-id="header-logo" to="/" className="header__logo">
           Travel App
         </Link>
-        {showNavigation && (
+        {user && (
           <nav data-test-id="header-nav" className="header__nav">
             <ul className="nav-header__list">
               <li className="nav-header__item" title="Bookings">
@@ -44,16 +47,17 @@ export function Header() {
                       data-test-id="header-profile-nav-username"
                       className="profile-nav__item"
                     >
-                      John Doe
+                      {user.fullName}
                     </li>
                     <li className="profile-nav__item">
-                      <Link
+                      <button
                         data-test-id="header-profile-nav-sign-out"
-                        to="/sign-in"
                         className="profile-nav__sign-out button"
+                        type="button"
+                        onClick={() => dispatch(signedOut())}
                       >
                         Sign Out
-                      </Link>
+                      </button>
                     </li>
                   </ul>
                 </div>
