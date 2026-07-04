@@ -239,3 +239,6 @@ select {
     transform: rotate(360deg);
   }
 }
+.notification {
+  font-family: inherit;
+}
