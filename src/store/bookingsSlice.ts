@@ -10,12 +10,14 @@ type CreateBookingPayload = {
 
 type BookingsState = {
   items: Booking[]
-  isLoading: boolean
+  loadStatus: 'idle' | 'loading' | 'succeeded' | 'failed'
+  isMutating: boolean
 }
 
 const initialState: BookingsState = {
   items: [],
-  isLoading: false,
+  loadStatus: 'idle',
+  isMutating: false,
 }
 
 export const loadBookings = createAsyncThunk<
@@ -65,34 +67,34 @@ const bookingsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loadBookings.pending, (state) => {
-        state.isLoading = true
+        state.loadStatus = 'loading'
       })
       .addCase(loadBookings.fulfilled, (state, action) => {
         state.items = action.payload
-        state.isLoading = false
+        state.loadStatus = 'succeeded'
       })
       .addCase(loadBookings.rejected, (state) => {
-        state.isLoading = false
+        state.loadStatus = 'failed'
       })
       .addCase(createBooking.pending, (state) => {
-        state.isLoading = true
+        state.isMutating = true
       })
       .addCase(createBooking.fulfilled, (state, action) => {
         state.items.push(action.payload)
-        state.isLoading = false
+        state.isMutating = false
       })
       .addCase(createBooking.rejected, (state) => {
-        state.isLoading = false
+        state.isMutating = false
       })
       .addCase(cancelBooking.pending, (state) => {
-        state.isLoading = true
+        state.isMutating = true
       })
       .addCase(cancelBooking.fulfilled, (state, action) => {
         state.items = state.items.filter(({ id }) => id !== action.payload)
-        state.isLoading = false
+        state.isMutating = false
       })
       .addCase(cancelBooking.rejected, (state) => {
-        state.isLoading = false
+        state.isMutating = false
       })
   },
 })

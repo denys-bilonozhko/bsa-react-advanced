@@ -6,6 +6,7 @@ import {
 import { toast } from 'react-toastify'
 import {
   authReducer,
+  loadCurrentUser,
   signIn,
   signUp,
   signedOut,
@@ -25,7 +26,7 @@ listenerMiddleware.startListening({
   effect: (action, api) => {
     const error = action.payload as ApiError
 
-    if (error.status === 401) {
+    if (error.status === 401 || loadCurrentUser.rejected.match(action)) {
       api.dispatch(signedOut())
     }
 

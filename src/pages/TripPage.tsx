@@ -1,18 +1,36 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import { BookTripModal } from '../components/BookTripModal'
-import type { Booking, Trip } from '../types/travel'
+import { Loader } from '../components/Loader'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { clearCurrentTrip, loadTrip } from '../store/tripsSlice'
 import './TripPage.css'
 
-type TripPageProps = {
-  trips: Trip[]
-  onBook: (booking: Booking) => void
-}
-
-export function TripPage({ trips, onBook }: TripPageProps) {
+export function TripPage() {
+  const dispatch = useAppDispatch()
   const { tripId } = useParams()
   const [isBookingOpen, setIsBookingOpen] = useState(false)
-  const trip = trips.find(({ id }) => id === tripId)
+  const { current: trip, currentStatus } = useAppSelector(
+    (state) => state.trips,
+  )
+
+  useEffect(() => {
+    if (tripId) {
+      void dispatch(loadTrip(tripId))
+    }
+
+    return () => {
+      dispatch(clearCurrentTrip())
+    }
+  }, [dispatch, tripId])
+
+  if (currentStatus === 'loading' || currentStatus === 'idle') {
+    return (
+      <main className="loader-page">
+        <Loader />
+      </main>
+    )
+  }
 
   if (!trip) {
     return <Navigate to="/" replace />
@@ -81,7 +99,6 @@ export function TripPage({ trips, onBook }: TripPageProps) {
       {isBookingOpen && (
         <BookTripModal
           trip={trip}
-          onBook={onBook}
           onClose={() => setIsBookingOpen(false)}
         />
       )}

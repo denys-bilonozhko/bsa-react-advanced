@@ -33,7 +33,13 @@ export async function apiRequest<T>(
     headers: requestHeaders,
   })
   const text = await response.text()
-  const data = text ? (JSON.parse(text) as unknown) : undefined
+  let data: unknown
+
+  try {
+    data = text ? (JSON.parse(text) as unknown) : undefined
+  } catch {
+    data = undefined
+  }
 
   if (!response.ok) {
     const errorData = data as

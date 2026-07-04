@@ -1,11 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Loader } from '../components/Loader'
 import { TripCard } from '../components/TripCard'
-import type { Trip, TripLevel } from '../types/travel'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { loadTrips } from '../store/tripsSlice'
+import type { TripLevel } from '../types/travel'
 import './TripsPage.css'
-
-type TripsPageProps = {
-  trips: Trip[]
-}
 
 type DurationFilter = '' | '0_x_5' | '5_x_10' | '10'
 type LevelFilter = '' | TripLevel
@@ -17,10 +16,18 @@ const durationMatches = (duration: number, filter: DurationFilter) => {
   return true
 }
 
-export function TripsPage({ trips }: TripsPageProps) {
+export function TripsPage() {
+  const dispatch = useAppDispatch()
+  const { items: trips, listStatus } = useAppSelector((state) => state.trips)
   const [search, setSearch] = useState('')
   const [duration, setDuration] = useState<DurationFilter>('')
   const [level, setLevel] = useState<LevelFilter>('')
+
+  useEffect(() => {
+    if (listStatus === 'idle') {
+      void dispatch(loadTrips())
+    }
+  }, [dispatch, listStatus])
 
   const visibleTrips = trips.filter(
     (trip) =>
@@ -82,11 +89,15 @@ export function TripsPage({ trips }: TripsPageProps) {
       </section>
       <section className="trips">
         <h2 className="visually-hidden">Trips List</h2>
-        <ul className="trip-list">
-          {visibleTrips.map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
-          ))}
-        </ul>
+        {listStatus === 'loading' ? (
+          <Loader />
+        ) : (
+          <ul className="trip-list">
+            {visibleTrips.map((trip) => (
+              <TripCard key={trip.id} trip={trip} />
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   )

@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from 'react'
-import type { Booking, Trip } from '../types/travel'
+import { createBooking } from '../store/bookingsSlice'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import type { Trip } from '../types/travel'
+import { Loader } from './Loader'
 import './BookTripModal.css'
 
 type BookTripModalProps = {
   trip: Trip
-  onBook: (booking: Booking) => void
   onClose: () => void
 }
 
@@ -23,32 +25,28 @@ const getTomorrow = () => {
 
 export function BookTripModal({
   trip,
-  onBook,
   onClose,
 }: BookTripModalProps) {
+  const dispatch = useAppDispatch()
+  const isLoading = useAppSelector((state) => state.bookings.isMutating)
   const [date, setDate] = useState('')
   const [guests, setGuests] = useState(1)
   const totalPrice = trip.price * guests
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const createdAt = new Date().toISOString()
 
-    onBook({
-      id: crypto.randomUUID(),
-      userId: '1dd97a12-848f-4a1d-8a7d-34a2132fca94',
-      tripId: trip.id,
-      guests,
-      date,
-      trip: {
-        title: trip.title,
-        duration: trip.duration,
-        price: trip.price,
-      },
-      totalPrice,
-      createdAt,
-    })
-    onClose()
+    const result = await dispatch(
+      createBooking({
+        tripId: trip.id,
+        guests,
+        date,
+      }),
+    )
+
+    if (createBooking.fulfilled.match(result)) {
+      onClose()
+    }
   }
 
   return (
@@ -68,6 +66,7 @@ export function BookTripModal({
           autoComplete="off"
           onSubmit={handleSubmit}
         >
+          {isLoading && <Loader />}
           <div className="trip-info">
             <h3
               data-test-id="book-trip-popup-title"
@@ -128,6 +127,7 @@ export function BookTripModal({
             data-test-id="book-trip-popup-submit"
             className="button"
             type="submit"
+            disabled={!date || guests < 1 || guests > 10 || isLoading}
           >
             Book a trip
           </button>
