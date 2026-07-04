@@ -1,17 +1,17 @@
 {
-  "name": "bsa-react",
+  "name": "bsa-react-advanced",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://denys-bilonozhko.github.io/bsa-react/",
+  "homepage": "https://denys-bilonozhko.github.io/bsa-react-advanced/",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "postbuild": "node scripts/create-404.mjs",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "gh-pages -d dist -r https://github.com/denys-bilonozhko/bsa-react-advanced.git",
     "lint": "eslint .",
-    "preview": "vite preview --base /bsa-react/"
+    "preview": "vite preview --base /bsa-react-advanced/"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
